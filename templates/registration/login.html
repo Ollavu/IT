@@ -1,0 +1,43 @@
+{% extends "sign.html" %}
+  {% load bootstrap4 %}
+    {% load static %}
+    {% bootstrap_css %}
+
+{% block content %}
+
+{% if form.errors %}
+  <h3>Неверный логин или пароль</h3>
+{% endif %}
+
+{% if next %}
+  {% if user.is_authenticated %}
+    <p>ДАВАЙ ПАРОЛЬ И ГОЛИН СВОЙ</p>
+  {% else %}
+    <h3>Введите логин и пароль</h3>
+  {% endif %}
+{% endif %}
+
+
+<form method="post" action="{% url 'login' %}">
+
+{% csrf_token %}
+<table class="form-signin table table-hover m-auto form-floating text-center justify-content-center">
+
+<tr>
+  <td>{{ form.username.label_tag }}</td>
+  <td>{{ form.username }}</td>
+</tr>
+
+<tr>
+  <td>{{ form.password.label_tag }}</td>
+  <td>{{ form.password }}</td>
+</tr>
+</table>
+
+<input  class="form-control"  style = "width:314px;" type="submit" value="Авторизоваться" name="login" />
+<input  class="form-control" type="hidden" name="next" value="{{ next }}" />
+</form>
+
+
+
+{% endblock %}

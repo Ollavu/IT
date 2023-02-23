@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+{% load bootstrap4 %}
+    <head>
+        {% load bootstrap4 %}
+        {% load static %}
+        {% bootstrap_css %} 
+        {% load notifications_tags %}
+        {% load webpush_notifications %}
+    <meta charset="utf-8">
+    <meta name="viewport" content= "width=device-width, initial-scale=1, shrink-to-fit=no">
+     <link rel= "icon"href="{% static 'img/favicon.png' %}">
+    <meta name="author" content="">
+
+
+    <title>ProfLink</title>
+
+    <!-- Bootstrap core CSS -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <link href="{% static 'css/bootstrap.min.css.map' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+ <link href="{% static 'css/offcanvas.css' %}" rel="stylesheet">
+ <link href="{% static 'img/bootstrap-select.css' %}" rel="stylesheet">
+ <link href="{% static 'img/bootstrap-select.js' %}" rel="stylesheet">
+
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="{% static 'js/holder.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/offcanvas.js' %}" ></script>
+<script src="{% static 'js/popper.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'audio/notify.js' %}" type="text/javascript"></script>
+
+  <link href="{% static 'js/jquery.slim.min.js' %}" rel="stylesheet">
+  <link href="{% static 'js/bootstrap.bundle.min.js' %}" rel="stylesheet">
+        <link href="{% static 'js/bootstrap.js' %}" rel="stylesheet">
+        <link href="{% static 'js/bootstrap.bundle.js.map' %}" rel="stylesheet">
+        <link href="{% static 'js/tether.min.js' %}" rel="stylesheet">
+        <script src="{% static 'js/bootstrap.bundle.js' %} " type="text/javascript"></script>
+   
+{% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge'%}
+  </head>
+
+  <body class="bg-light" onload="change()" style="height:800px">
+            <!----УВЕДОМЛЕНИЯ---->
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} text-center m-2" id = "msg" role = "alert">
+                {{ message }}
+            </div>
+            {% if message.tags == 'alert-success'%}
+            <audio src="{% static 'audio/success.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% if message.tags == 'alert-warning'%}
+            <audio src="{% static 'audio/lag.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% if message.tags == 'alert-danger'%}
+            <audio src="{% static 'audio/error.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+
+    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+      <a class="navbar-brand pl-2" href="#">{{short_name}}</a>
+      {% load notifications_tags %}          
+                                <div class="dropdown">
+                                    <button class="btn btn-primary-outline text-white dropdown-toggle" type="button"  data-toggle="modal" data-target="#notifications" aria-haspopup="true" aria-expanded="false">
+                                    <img src="{% static 'img/bell.png' %}" style = "height: 20px; widows: 30px;" alt="" /> {% live_notify_badge %}</img>
+                                    </button>
+                                     {% if notifications_unread %}
+
+                                    <div class="dropdown-menu p-0 m-0" style="width:325px;" aria-labelledby="dropdownMenuButton">
+                                        {% live_notify_list %}
+                                    </div>
+                                    {% else %}
+                                    <div class="dropdown-menu p-0 m-0" style="width:325px;" aria-labelledby="dropdownMenuButton">
+                                        123
+                                    </div>
+                                    {% endif %}
+                                    
+                                </div>
+      <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav justify-content-center text-center">
+          <li class="nav-item ">
+            <a class="nav-link" onclick="view('adding','closed_requests');$('.offcanvas-collapse').toggleClass('open')" href="#">Учёт рабочего времени</a>
+          </li>
+          <li class="nav-item" >
+            <a class="nav-link" onclick="view('closed_requests','adding');$('.offcanvas-collapse').toggleClass('open')" href="#">Статистика</a>
+          </li>
+          <li class="nav-item" >
+            <a class="nav-link  w-100" data-toggle="modal" data-target="#tool_forwarding" href="#" id="dropdown01" aria-haspopup="true" aria-expanded="false">Взять инструмент</a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="modal" data-target="#notifications" href="#">Уведомления</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link  w-100" data-toggle="modal" data-target="#leave" href="#" id="dropdown01" aria-haspopup="true" aria-expanded="false">Logout</a>
+           
+             
+              
+          </li>
+        </ul>
+
+      </div>
+    </nav>
+                            
+
+
+
+
+    <main onload="change()" role="main" class=" pr-0">
+
+
+      <!--
+      <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded box-shadow">
+
+      </div>
+
+      <div class="my-3 p-3 bg-white rounded box-shadow">
+        
+      </div>-->
+    <!--НАЧАТЬ РАБОТУ-->
+  <div class="justify-content-center text-center py-3">
+                <div class=" col-md-5 col-lg-5  mx-auto" id="adding">
+                    {% if objects %}
+
+                    {% if status %}
+                    <input type="text" id="lat" style="display: none;" readonly value = ""  name ="latitude">
+                        <input type="text" id="lon" style="display: none;" readonly value = ""  name ="longitude">
+
+                        
+
+
+                            <!-- Модальное окно -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Заполните необходимую информацию</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form class="needs-validation" method="post" action="{% url 'closing' %} " enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12" style="display: none;">
+                                <label for="fullName" class="form-label" >ФИО</label>
+                                <input type="text" class="form-control"  id="firstName" placeholder="" value="{{worker.fullname}}" readonly>
+                            </div>
+                            <div style="display: none;">
+                                <label for="note" class="form-label">Объект</label>
+                                <select  name = "note"class="form-control" required>
+                                    {% for request in unclosed %}
+                                    <option> {{request}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <!--ДЕВАЧЬКИ, ЭТА ФОТАЧЬКИ-->
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="photo1" id="photo1"  accept="image/*" required>
+                                <label class="custom-file-label" for="photo1">Клик для выбора фото</label>
+                            </div>
+<div class="custom-file">
+                                <input type="file" class="custom-file-input" name="photo2" id="photo2" accept="image/*" required>
+                                <label class="custom-file-label" for="photo2">Клик для выбора фото</label>
+                            </div>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="photo3" id="photo3" accept="image/*" required>
+                                <label class="custom-file-label" for="photo3">Клик для выбора фото</label>
+                            </div>
+
+                            <div class="custom-file">
+
+                                <input type="text" class="form-control" name="comments" placeholder="Если нужно отмазаться - заполняйте" id="comments" >
+                                
+                            </div>
+                            <input type="text" id="close_lat" style="display: none;" readonly value = ""  name ="close_latitude">
+                            <input type="text" id="close_lon" style="display: none;" readonly value = ""  name ="close_longitude">
+                            <button class="w-100 btn btn-primary btn-lg" id="closework" type = "submit"  >Закрыть объект</button> 
+                        </div>
+                    </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <p style="display: none" id = "timer" class="fs-6">{{timer}}</p>
+                        <h4 class="py-1 mb-0">Выполняется объект</h4>
+
+                        {% for request in unclosed %}
+                                    <h5> {{request.objectid}}</h5>
+                                    {% endfor %}
+                        <p id = "timer2" class="fs-3"></p>
+                        <!--КНОПКА ЗАКРЫТИЯ ОБЖЕКТА-->
+                        <button class="w-100 btn btn-primary btn-lg btn-danger" data-toggle="modal" data-target="#exampleModal" onclick = "getLocation()">Закрыть объект</button> 
+                        <!--КНОПКА ОТМЕНЫ РАБОТЫ-->
+                        <button class="my-3 w-100 btn btn-primary btn-success text-white" type="button"  data-toggle="modal" data-target="#cancel" aria-haspopup="true" aria-expanded="false">
+                                   Отменить работу
+                                    </button>
+                            <!--МОДАЛЬНОЕ ОКНО ОТМЕНЫ РАБОТЫ-->
+                            <div class="modal fade" id="cancel" tabindex="-1" aria-labelledby="cancellabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="cancellabel">Вы точно хотите отменить начатую работу?</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+                                
+                              </div>
+                        <div class="modal-body">
+                                <form class="needs-validation" method="post" action="{% url 'cancel' %} " enctype="multipart/form-data">{% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12" style="display: none;">
+                                <label for="fullName" class="form-label" >ФИО</label>
+                                <input type="text" class="form-control"  id="firstName" placeholder="" value="{{worker.fullname}}" readonly>
+                            </div>
+                            <div style="display: none;">
+                                <label for="note" class="form-label">Объект</label>
+                                <select  name = "note"class="form-control" required>
+                                    {% for request in unclosed %}
+                                    <option> {{request}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <button class="w-100 btn btn-primary btn-lg"  type = "submit"  >Отменить работу</button> 
+                        </div>
+                    </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                          <!---->
+                        {% csrf_token %}
+                     {% else %}
+                    <form class="needs-validation" method="post" action="{% url 'base' %}"  id="send-push__form" >
+                        {% csrf_token %}
+
+                        <div class="row g-3">
+
+                            <div class="col-md-12">
+                                <h4>Выберите объект</h4>
+                                <select  name = "object" class="w-100 form-control text-center border border-danger " required>
+                                    {% for object in objects %}
+                                    <option class="pl-5"> {{object}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <hr class="my-3">
+                        <input type="text" id="lat" style="display: none;" readonly value = ""  name ="latitude">
+                        <input type="text" id="lon" style="display: none;" readonly value = ""  name ="longitude">
+                         <button class="w-100 btn btn-primary btn-lg " type="submit">Начать работу на объекте</button>
+
+                        
+                    </form>
+                      {% endif%}
+                    {% else %}
+                    <h1 class ="form-label"> Нет активных объектов </h1>
+                    {% endif %}
+                    {% if closed_today %}
+                    <h5 class="mb-2 py-2">Закрытые объекты сегодня</h5>
+                    <div style="max-height: 550px; overflow: auto;">
+                        <table class="table table-bordered" style="overflow: auto;" >
+                            <thead class="thead-dark" style="position: sticky">
+                                <tr class="sticky align-middle">
+                                    <th class="align-middle" style="position: sticky; top: 0; z-index: 1;" scope="col">Номер</th>
+                                    <th class="align-middle" style="position: sticky; top: 0; z-index: 1;" scope="col">Объект</th>
+                                    <th class="align-middle" style="position: sticky; top: 0; z-index: 1;" scope="col">Затраченное время</th>
+                                    <th class="align-middle" style="position: sticky; top: 0; z-index: 1;" scope="col">Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for closed in closed_today %}
+                                <tr>
+                                    <th scope="row">{{closed.number}}</th>
+                                    <th>{{closed.obj}}</th>
+                                    <th>{{closed.time}}</th>
+                                    
+                                    {% if closed.status == 1 %}
+                                      <th><img src="{% static 'img/accepted.svg' %}"> </img></th>
+                                    {% endif %}
+                                    {% if closed.status == 2 %}
+                                      <th><img src="{% static 'img/declined.svg' %}"> </img></th>
+                                    {% endif %}
+                                    {% if closed.status == 3 %}
+                                      <th><img src="{% static 'img/waiting.svg' %}"> </img></th>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <h1 class="mb-3">Сегодня Вы не были ни на одном объекте</h1>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                    {{pass}}
+                    {% else %}
+                    <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+                    {% endif %} 
+                </div>
+
+                 <div class=" col-md-5 col-lg-5 mx-auto" id="closed_requests" style="display: none; max-width:400px;">
+                    {% if closed_requests %}
+                    <h4 class="mb-3">Закрытые объекты</h4>
+                   <table class="table table-bordered justify-content-center">
+        <tbody><tr class="justify-content-center">
+            <td>Начальная дата:</td>
+            <td><input type="text" id="min" ></td>
+        </tr>
+        <tr class="justify-content-center">
+            <td>Конечная дата:</td>
+            <td><input type="text" id="max"></td>
+        </tr>
+    </tbody></table>
+                    <div style="overflow: auto;">
+                        <table id = "closed_objects" class="table table-bordered" style="overflow: auto;" >
+                            <thead class="thead-dark" style="position: sticky">
+                                <tr class="sticky">
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Объект</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Дата начала</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Дата Окончания</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for closed_request in closed_requests%}
+                                <tr>
+
+                                    <td class="col-md-2 col-sm-3 col-xs-6 ">{{closed_request.obj}}</td>
+                                    <td class="col-md-2 col-sm-3 col-xs-6 ">{{closed_request.open_date}}</td>
+                                    <td class="col-md-2 col-sm-3 col-xs-6 ">{{closed_request.close_date}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                    {% else %}
+                    <h1 class="mb-3">Пока нет оконченных работ</h1>
+                    {% endif %}
+                </div>
+</div>
+
+    </main>
+
+
+
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<link href="https://nightly.datatables.net/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+<script src="https://nightly.datatables.net/js/jquery.dataTables.js"></script> 
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<!-- DataTables  & Plugins -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.1.2/css/dataTables.dateTime.min.css">
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.1.2/js/dataTables.dateTime.min.js"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+<!------------------------МОДАЛЬНЫЕ ОКНА---------------------------------------->
+
+<!------------------------ПЕРЕДАЧА ИНСТРУМЕНТА---------------------------------------->
+<!--МОДАЛЬНОЕ ОКНО ОТМЕНЫ РАБОТЫ-->
+                            <div class="modal fade" id="leave" tabindex="-1" aria-labelledby="leavelabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title justify-content-center text-center" id="leavelabel">Вы точно хотите ливнуть?</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+                                
+                              </div>
+                        <div class="modal-body justify-content-center text-center">
+        <a class="dropdown-item text-center" href="{% url 'logout'%}?next={{request.path}}">Выйти</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+<!------------------------МОДАЛЬНЫЕ ОКНА---------------------------------------->
+
+      <!-- Модальное окно  УВЕДОМЛЕНИЙ -->
+                        <div class="modal fade" id="notifications" tabindex="-1" aria-labelledby="notificationslabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="notificationslabel">Ваши уведомления</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+                              </div>
+                              <div class="modal-body">
+                                 {% load notifications_tags %}
+                                {% if notifications_unread %}
+
+                                    <div class="dropdown-menu p-0 m-0" style="width:325px;" aria-labelledby="dropdownMenuButton">
+                                        {% live_notify_list %}
+                                    </div>
+                                    {% else %}
+                                    <p class="dropdown-item text-center">No notifications </p> 
+                                    
+                                    
+                                    {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+<!--------------------------------МОДАЛЬНОЕ ОКНО ВЗЯТИЯ ИНСТРУМЕНТА-------------------------------->
+                            <div class="modal fade justify-content-center text-center" id="tool_forwarding" tabindex="-1" aria-labelledby="tool_forwardinglabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header justify-content-center text-center">
+                                <h5 class="modal-title" style ="padding-left: 100px;" id="cancellabel">Передача инструмента</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+                                
+                              </div>
+                        <div class="modal-body">
+
+                            {% if orig_notes %}
+                                <form class="needs-validation" method="post" action="{% url 'tool_forwarding' %} " enctype="multipart/form-data">{% csrf_token %}
+                            
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="tool" class="form-label">Инструмент</label>
+                                <select onchange="change()" id="tool" name = "tool" class="form-control" required>
+                                    {% for tool_note in orig_notes %}
+                                    
+                                    <option class = "text-center"> {{tool_note.tool_name}}
+                                    </option>
+                                    {% endfor %}
+
+                                </select>
+                                {% for tool_note in orig_notes %}
+                                <input type="text" style="display:none" id="{{tool_note.tool_name}}" placeholder="" value="{{tool_note.workerid}}" readonly>
+                                {% endfor %}
+                            </div>
+                            <div class="col-12">
+                                <label for="person" class="form-label">Ответственное лицо в данный момент</label>
+                                <input type="text" class="form-control text-center" name ="worker_name"  id="worker_name" placeholder="" value="" readonly>
+                            </div>
+                            
+
+                                
+
+
+                             <div class="col-12">
+                             <input type="text" class="form-control text-center" name="comments" placeholder="Примечание" id="comments" >
+                            </div>
+                            <button class="w-100 btn btn-primary btn-lg"  type = "submit"  >Взять инструмент</button> 
+                        </div>
+                    </form>
+                    {% else %}
+                    <h5 class="modal-title"  id="cancellabel">Весь инструмент в данный момент оформлен на Вас</h5>
+                    {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+<!--------------------------------МОДАЛЬНОЕ ОКНО ПЕРЕДАЧИ ИНСТРУМЕНТА-------------------------------->
+  </body>
+
+
+  <script>
+    function change() {
+       d = document.getElementById("tool").value;
+       id = document.getElementById(d).value;
+       document.getElementById("worker_name").value = id;
+        }
+  </script>
+
+
+
+  <script type = "text/javascript">
+$.fn.dataTableExt.oApi.fnStandingRedraw = function(oSettings) {
+    //redraw to account for filtering and sorting
+    // concept here is that (for client side) there is a row got inserted at the end (for an add)
+    // or when a record was modified it could be in the middle of the table
+    // that is probably not supposed to be there - due to filtering / sorting
+    // so we need to re process filtering and sorting
+    // BUT - if it is server side - then this should be handled by the server - so skip this step
+    if(oSettings.oFeatures.bServerSide === false){
+        var before = oSettings._iDisplayStart;
+        oSettings.oApi._fnReDraw(oSettings);
+        //iDisplayStart has been reset to zero - so lets change it back
+        oSettings._iDisplayStart = before;
+        oSettings.oApi._fnCalculateEnd(oSettings);
+    }
+      
+    //draw the 'current' page
+    oSettings.oApi._fnDraw(oSettings);
+};
+
+  var minDate, maxDate;
+ 
+ // Custom filtering function which will search data in column four between two values
+ $.fn.dataTable.ext.search.push(
+     function( settings, data, dataIndex ) {
+         var min = minDate.val();
+         var max = maxDate.val();
+         var date = new Date( moment(data[1], 'YYYY-MM-DD').format('YYYY-MM-DD') );
+       
+  
+         if (
+             ( min === null && max === null ) ||
+             ( min === null && date <= max ) ||
+             ( min <= date   && max === null ) ||
+             ( min <= date   && date <= max )
+         ) {
+             return true;
+         }
+         return false;
+         var min = minDate.val();
+         var max = maxDate.val();
+         var date = new Date( moment(data[2], 'YYYY-MM-DD').format('YYYY-MM-DD') );
+       
+  
+         if (
+             ( min === null && max === null ) ||
+             ( min === null && date <= max ) ||
+             ( min <= date   && max === null ) ||
+             ( min <= date   && date <= max )
+         ) {
+             return true;
+         }
+         return false;
+     }
+ );
+  
+ $(document).ready(function() {
+
+$("#notifications").modal("toggle")
+     // Create date inputs
+     minDate = new DateTime($('#min'), {
+         format: 'YYYY-MM-DD'
+     });
+     maxDate = new DateTime($('#max'), {
+         format: 'YYYY-MM-DD'
+     });
+  
+
+
+     // DataTables initialisation
+     var table = $('#closed_objects').dataTable();
+  
+  $('#min').on('change', function () {
+         table.fnStandingRedraw();
+         table.draw(page);
+     });
+     // Refilter the table
+     $('#min').on('click', function () {
+         table.columns.adjust().draw();
+     });
+
+     $('#max').on('change', function () {
+         table.fnStandingRedraw();
+         table.draw(page);
+     });
+     $('#max').on('click', function () {
+   table.columns.adjust().draw(); // Redraw the DataTable
+});
+ });
+
+</script>
+
+
+
+
+<script>
+let timerShow = "{{timer}}";
+timeMinut = parseInt(timerShow);
+
+let timerShow2 = document.getElementById("timer2");
+        function timer(){
+
+            seconds = timeMinut%60;
+            minutes = Math.trunc(timeMinut/60%60);
+            hour = Math.trunc(timeMinut/60/60%60);
+            if (Number(seconds) < 10){
+                seconds = "0" + seconds;
+            }
+            if (Number(minutes) < 10){
+                minutes = "0" + minutes;
+            }
+            if (Number(hour) < 10){
+                hour = "0" + hour;
+            }
+            let strTimer = `${hour}:${minutes}:${seconds}`;
+            console.log(timerShow);
+            console.log(timeMinut);
+        // Выводим строку в блок для показа таймера
+        try {
+        timerShow2.innerHTML = strTimer;
+    }
+    catch(err){}
+        ++timeMinut;
+                }
+    </script>
+
+    <script >
+        setTimeout(function(){
+          if ($('#msg').length > 0) {
+            $('#msg').remove();
+          }
+        }, 4000)
+    </script>
+    <script>
+        function view(id1,id2){
+                var divs = document.getElementsByTagName('div');
+                
+                for(var i = 0; i < divs.length; i++){
+                  if(divs[i].id == id1){
+                    divs[i].style.display = 'block';
+                    continue;
+                  }
+                  if(divs[i].id == id2){
+                    divs[i].style.display = 'none';
+                    continue;
+                  }
+
+                }
+              }
+    </script>
+    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <script>
+        var x = document.getElementById("lat");
+        var y = document.getElementById("lon");
+        var close_lat=document.getElementById("close_lat");
+        var close_lon=document.getElementById("close_lon");
+
+        function getLocation()
+          {
+
+          if (navigator.geolocation)
+            {
+            navigator.geolocation.getCurrentPosition(showPosition,showError);
+            }
+          }
+        function showPosition(position)
+          {
+          lat = position.coords.latitude;
+          lon = position.coords.longitude;
+          x.value = position.coords.latitude;
+          y.value = position.coords.longitude;
+          close_lat.value = x.value;
+          close_lon.value = y.value;
+          }
+        function showError(error)
+          {
+          switch(error.code)
+            {
+            case error.PERMISSION_DENIED:
+              x.innerHTML="User denied the request for Geolocation."
+              break;
+            case error.POSITION_UNAVAILABLE:
+              x.innerHTML="Location information is unavailable."
+              break;
+            case error.TIMEOUT:
+              x.innerHTML="The request to get user location timed out."
+              break;
+            case error.UNKNOWN_ERROR:
+              x.innerHTML="An unknown error occurred."
+              break;
+            }
+          }
+    </script>
+
+    </script>
+    <script>
+        $(document).ready(function(){
+    setInterval("timer()",1000);
+    getLocation();
+    setInterval("getLocation()",1800000);
+    }); 
+    </script>
+    <script>
+        $('#photo1').on('change',function(){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName);
+        })
+    </script>
+    <script>
+        $('#photo2').on('change',function(){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName);
+        })
+    </script>
+    <script>
+        $('#photo3').on('change',function(){
+            //get the file name
+            var fileName = $(this).val();
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName);
+        })
+    </script>
+
+</html>

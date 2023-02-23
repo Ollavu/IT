@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+{% load bootstrap4 %}
+    <head>
+        {% load bootstrap4 %}
+        {% load custom_filters %}
+        {% load static %}
+        {% bootstrap_css %} 
+    <meta charset="utf-8">
+    <meta name="viewport" content= "width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel= "icon"href="{% static 'img/favicon.png' %}">
+    <meta name="author" content="">
+
+
+    <title>ProfLink</title>
+
+ <!----------------------------CSS ---------------------------->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <link href="{% static 'css/bootstrap.min.css.map' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/offcanvas.css' %}" rel="stylesheet">
+<!----------------------------CSS ---------------------------->
+<!----------------------------JS ---------------------------->
+    <script src="{% static 'js/popper.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/holder.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/offcanvas.js' %}" ></script>
+    <script src="{% static 'js/popper.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'img/notify.js' %}" type="text/javascript"></script>
+    <link href="{% static 'js/jquery.slim.min.js' %}" rel="stylesheet">
+    <link href="{% static 'js/bootstrap.bundle.min.js' %}" rel="stylesheet">
+    <link href="{% static 'js/bootstrap.js' %}" rel="stylesheet">
+    <link href="{% static 'js/bootstrap.bundle.js.map' %}" rel="stylesheet">
+    <link href="{% static 'js/tether.min.js' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.bundle.js' %} " type="text/javascript"></script>
+
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<!----------------------------JS ---------------------------->
+  </head>
+
+  <body class="bg-secondary" onload="change()" style="height:100%">
+    <div style = "height: 70px;">
+            <!----УВЕДОМЛЕНИЯ---->
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} text-center" id = "msg" role = "alert">
+                {{ message }}
+            </div>
+            {% if message.tags == 'alert-success'%}
+            <audio src="{% static 'audio/success.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% if message.tags == 'alert-warning'%}
+            <audio src="{% static 'audio/lag.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% if message.tags == 'alert-danger'%}
+            <audio src="{% static 'audio/error.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+</div>
+
+    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark mb-6">
+  
+
+      <div class="navbar-collapse justify-content-center text-center" id="navbarsExampleDefault">
+        <ul class="navbar-nav ">
+          <li class="nav-item ">
+            <a class="nav-link" onclick="view(['new_request','history'])" href="#">Открыть заявку</a>
+          </li>
+          <li class="nav-item" >
+            <a class="nav-link" onclick="view(['history','new_request'])" href="#">История</a>
+          </li>
+          
+          
+        </ul>
+
+      </div>
+    </nav>
+                            
+
+
+
+
+    <main onload="change()" class="container" role="main" class=" pr-0">
+
+
+<!------------------------------------------ОСТАВИТЬ НОВУЮ ЗАЯВКУ---------------------------------------------------------->
+  <div class="justify-content-center text-center">
+                <div class="col-md-6 order-md-6 jumbotron mx-auto bg-light" style="border-radius: 15px;max-width:400px;" id="new_request">
+
+                    <h2 class ="form-label">Заполнение данных </h2>
+                        <form class="needs-validation" method="post" action="{% url 'new_request' %} " enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                                <div class="mb-2">
+                                    <label for="">Название организации</label>
+                                    <input type="text" name="organisation" required class="w-100 text-center border border-primary my-2 p-2"style="border-radius: 10px;" placeholder="Введите название"> 
+                                </div>
+                                <div class="mb-2">
+                                     <label for="phohe_number">Номер телефона</label>
+                                     <input type="tel" id="phohe_number" name="phohe_number" required class="w-100 text-center border border-primary my-2 p-2"style="border-radius: 10px;" placeholder="Введите номер телефона"> 
+                                </div>
+                                <div class="mb-2">
+                                     <label for="email">E-mail</label>
+                                     <input type="email" id="email" name="email" required class="w-100 text-center border border-primary my-2 p-2"style="border-radius: 10px;" placeholder="Введите e-mail"> 
+                                </div>
+                               <div class="mb-2">
+                                    <label stylfor="">Приоритет</label>
+                                <select id="priority" name = "priority" class="form-control text-center border border-primary w-100" required>
+                                    
+                                    {% for status in statuses %}
+                                    <option class="text-center"> {{status}}</option>
+                                    {% endfor %}
+                                </select>
+                                </div>
+                                <div class="form-group text-center">
+                                    <label for="exampleFormControlTextarea1">Описание проблемы</label>
+                                    <textarea class="form-control text-center" name="problem_description" id="exampleFormControlTextarea1" placeholder="Опишите Вашу проблему" rows="3" required></textarea>
+                                  </div>
+
+
+                             <button class=" form-control btn btn-primary btn-lg my-3"  type="submit">Отправить данные</button>
+                        </form>
+
+
+
+                </div>
+                </div>
+
+<!------------------------------------------ОСТАВИТЬ НОВУЮ ЗАЯВКУ-------------------------------------------------------->
+<!-------------------------------------------------ИСТОРИЯ ЗАЯВОК-------------------------------------------------------->
+<div class="justify-content-center text-center" >
+                 <div class=" col-md-5 col-lg-5 mx-auto jumbotron bg-light" id="history" style="display: none; max-width:400px;border-radius: 15px;">
+
+                    {% if history %}
+                    <h4 class="mb-3">Закрытые объекты</h4>
+                   <table class="table table-bordered justify-content-center">
+        <tbody><tr class="justify-content-center">
+            <td>Начальная дата:</td>
+            <td><input type="text" id="min" ></td>
+        </tr>
+        <tr class="justify-content-center">
+            <td>Конечная дата:</td>
+            <td><input type="text" id="max"></td>
+        </tr>
+    </tbody></table>
+                    <div style="overflow: auto;">
+                        <table id = "noted_works_table" class="table table-bordered" style="overflow: auto;" >
+                            <thead class="thead-dark" style="position: sticky">
+                                <tr class="sticky">
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Объект</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Дата работы</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Время работы</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for note in history %}
+                                <tr>
+
+                                    <td class="col-md-2 col-sm-3 col-xs-6 ">{{note.obj}}</td>
+                                    <td class="col-md-2 col-sm-3 col-xs-6 ">{{note.date}}</td>
+                                    <td class="col-md-2 col-sm-3 col-xs-6 ">{{note.spended_time}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                    {% else %}
+                    <h1 class="mb-3">Пока нет оконченных работ</h1>
+                    {% endif %}
+                </div>
+</div>
+<!-------------------------------------------------ИСТОРИЯ ЗАЯВОК-------------------------------------------------------->
+
+
+    </main>
+
+<script>
+const validateEmail = (email) => {
+  return email.match(
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  );
+};
+
+const validate = () => {
+  const $result = $('#email');
+  const email = $('#email').val();
+  $result.text('');
+
+  if (validateEmail(email)) {
+    $result.text(email + ' is valid :)');
+    $result.css('color', 'green');
+  } else {
+    $result.text(email + ' is not valid :(');
+    $result.css('color', 'red');
+  }
+  return false;
+}
+
+$('#email').on('input', validate);
+</script>
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<link href="https://nightly.datatables.net/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+<script src="https://nightly.datatables.net/js/jquery.dataTables.js"></script> 
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<!-- DataTables  & Plugins -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.1.2/css/dataTables.dateTime.min.css">
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.1.2/js/dataTables.dateTime.min.js"></script>
+
+
+
+  </body>
+  
+
+ <script>
+    function change() {
+       d = document.getElementById("tool").value;
+       id = document.getElementById(d).value;
+       document.getElementById("worker_name").value = id;
+        }
+</script>
+
+
+  <script type = "text/javascript">
+$.fn.dataTableExt.oApi.fnStandingRedraw = function(oSettings) {
+    //redraw to account for filtering and sorting
+    // concept here is that (for client side) there is a row got inserted at the end (for an add)
+    // or when a record was modified it could be in the middle of the table
+    // that is probably not supposed to be there - due to filtering / sorting
+    // so we need to re process filtering and sorting
+    // BUT - if it is server side - then this should be handled by the server - so skip this step
+    if(oSettings.oFeatures.bServerSide === false){
+        var before = oSettings._iDisplayStart;
+        oSettings.oApi._fnReDraw(oSettings);
+        //iDisplayStart has been reset to zero - so lets change it back
+        oSettings._iDisplayStart = before;
+        oSettings.oApi._fnCalculateEnd(oSettings);
+    }
+      
+    //draw the 'current' page
+    oSettings.oApi._fnDraw(oSettings);
+};
+
+  var minDate, maxDate;
+ 
+ // Custom filtering function which will search data in column four between two values
+ $.fn.dataTable.ext.search.push(
+     function( settings, data, dataIndex ) {
+         var min = minDate.val();
+         var max = maxDate.val();
+         var date = new Date( moment(data[1], 'YYYY-MM-DD').format('YYYY-MM-DD') );
+       
+  
+         if (
+             ( min === null && max === null ) ||
+             ( min === null && date <= max ) ||
+             ( min <= date   && max === null ) ||
+             ( min <= date   && date <= max )
+         ) {
+             return true;
+         }
+         return false;
+         var min = minDate.val();
+         var max = maxDate.val();
+         var date = new Date( moment(data[2], 'YYYY-MM-DD').format('YYYY-MM-DD') );
+       
+  
+         if (
+             ( min === null && max === null ) ||
+             ( min === null && date <= max ) ||
+             ( min <= date   && max === null ) ||
+             ( min <= date   && date <= max )
+         ) {
+             return true;
+         }
+         return false;
+     }
+ );
+  
+ $(document).ready(function() {
+     // Create date inputs
+     minDate = new DateTime($('#min'), {
+         format: 'YYYY-MM-DD'
+     });
+     maxDate = new DateTime($('#max'), {
+         format: 'YYYY-MM-DD'
+     });
+    
+
+
+
+     // DataTables initialisation
+     var table = $('#noted_works_table').dataTable();
+  
+  $('#min').on('change', function () {
+         table.fnStandingRedraw();
+         table.draw(page);
+     });
+     // Refilter the table
+     $('#min').on('click', function () {
+         table.columns.adjust().draw();
+     });
+
+     $('#max').on('change', function () {
+         table.fnStandingRedraw();
+         table.draw(page);
+     });
+     $('#max').on('click', function () {
+   table.columns.adjust().draw(); // Redraw the DataTable
+});
+ });
+
+</script>
+
+    <script >
+        setTimeout(function(){
+          if ($('#msg').length > 0) {
+            $('#msg').remove();
+          }
+        }, 4000)
+    </script>
+    <script>
+        function view(divs_array){
+                var divs = document.getElementsByTagName('div');
+                document.getElementById(divs_array[0]).style.display = 'block';
+                for(var i = 1; i < divs_array.length; i++){
+                    document.getElementById(divs_array[i]).style.display = 'none';
+                  }
+
+              }
+    </script>
+</html>

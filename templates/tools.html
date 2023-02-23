@@ -1,0 +1,82 @@
+
+<!doctype html>
+<html lang="en">
+{% load static %}
+{% load bootstrap4 %}
+    <head>
+        {% load bootstrap4 %}
+        {% load static %}
+        {% bootstrap_css %} 
+        {% load notifications_tags %}
+        {% load webpush_notifications %}
+    <meta charset="utf-8">
+    <meta name="viewport" content= "width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta name="author" content="">
+
+
+    <title>ProfLink</title>
+
+    <!-- Bootstrap core CSS -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <link href="{% static 'css/bootstrap.min.css.map' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+ <link href="{% static 'css/offcanvas.css' %}" rel="stylesheet">
+
+
+
+<script src="{% static 'js/holder.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/offcanvas.js' %}" ></script>
+<script src="{% static 'js/popper.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'audio/notify.js' %}" type="text/javascript"></script>
+
+  <link href="{% static 'js/jquery.slim.min.js' %}" rel="stylesheet">
+  <link href="{% static 'js/bootstrap.bundle.min.js' %}" rel="stylesheet">
+        <link href="{% static 'js/bootstrap.js' %}" rel="stylesheet">
+        <link href="{% static 'js/bootstrap.bundle.js.map' %}" rel="stylesheet">
+        <link href="{% static 'js/tether.min.js' %}" rel="stylesheet">
+        <script src="{% static 'js/bootstrap.bundle.js' %} " type="text/javascript"></script>
+   
+{% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge'%}
+  </head>
+
+  <body class="bg-light">
+            <!----УВЕДОМЛЕНИЯ---->
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} text-center m-2" id = "msg" role = "alert">
+                {{ message }}
+            </div>
+            {% if message.tags == 'alert-success'%}
+            <audio src="{% static 'audio/success.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% if message.tags == 'alert-warning'%}
+            <audio src="{% static 'audio/lag.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% if message.tags == 'alert-danger'%}
+            <audio src="{% static 'audio/error.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+
+
+
+    <main role="main" class="">
+
+  <div class="justify-content-center text-center py-3">
+  </div>
+
+    </main>
+
+
+
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+  </body>
+
+  
+
+</html>

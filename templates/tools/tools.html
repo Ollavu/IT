@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+{% load bootstrap4 %}
+    <head>
+        {% load bootstrap4 %}
+        {% load static %}
+        {% bootstrap_css %} 
+        {% load notifications_tags %}
+    <meta charset="utf-8">
+    <meta name="viewport" content= "width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta name="author" content="">
+    <link rel= "icon"href="{% static 'img/favicon.png' %}">
+
+
+    <title>Электронный журнал</title>
+
+    <!----------------------------CSS ---------------------------->
+
+ <script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript"></script>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <link href="{% static 'css/bootstrap.min.css.map' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+     <link href="{% static 'css/offcanvas.css' %}" rel="stylesheet">
+
+    <!----------------------------CSS ---------------------------->
+    <!----------------------------JS ---------------------------->
+    <script src="{% static 'js/popper.min.js' %}" type="text/javascript"></script>
+
+    <script src="{% static 'js/holder.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/offcanvas.js' %}" ></script>
+    <link href="{% static 'js/jquery.slim.min.js' %}" rel="stylesheet">
+    <link href="{% static 'js/bootstrap.bundle.min.js' %}" rel="stylesheet">
+    <link href="{% static 'js/bootstrap.js' %}" rel="stylesheet">
+    <link href="{% static 'js/bootstrap.bundle.js.map' %}" rel="stylesheet">
+    <link href="{% static 'js/tether.min.js' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.bundle.js' %} " type="text/javascript"></script>
+   <!----------------------------JS ---------------------------->
+
+  </head>
+
+  <body class="bg-light" onload="change()" style="height:95%;">
+    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+      
+      <button class="navbar-toggler pl-3 border-0" type="button" data-toggle="offcanvas">
+        <span class="navbar-toggler-icon pl-3"></span>
+      </button>
+
+      <div class="navbar-collapse offcanvas-collapse justify-content-center text-center" id="navbarsExampleDefault">
+        <ul class="navbar-nav justify-content-center text-center">
+          <li class="nav-item ">
+            <a class="nav-link" onclick="view(['tools_notes','tool_forwards','tools_edit','tool_delete','temp_transfers']);$('.offcanvas-collapse').toggleClass('open')" href="#">Электронный журнал</a>
+          </li>
+          <li class="nav-item dropdown">
+            
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Инструменты
+        </a>
+        <div class="dropdown-menu bg-dark justify-content-center text-center" id = "tool_menu" aria-labelledby="navbarDropdown2">
+          <a class="nav-link  w-100" data-toggle="modal" data-target="#add_tool" href="#" id="dropdown01" aria-haspopup="true" aria-expanded="false">Добавить инструмент</a>
+          <a class="nav-link  w-100" data-toggle="modal" data-target="#tool_forwarding" href="#" id="dropdown01" aria-haspopup="true" aria-expanded="false">Передача инструмента</a>
+          <a class="nav-link" onclick="view(['tools_edit','tool_forwards','tools_notes','tool_delete','temp_transfers']);$('.offcanvas-collapse').toggleClass('open')" href="#">Редактирование инструмента</a>
+          <a class="nav-link" onclick="view(['tool_delete','tools_edit','tool_forwards','tools_notes','temp_transfers']);$('.offcanvas-collapse').toggleClass('open')" href="#">Удаление инструмента</a>
+
+          </li>
+          
+          <li class="nav-item" >
+            <a class="nav-link" onclick="view(['tool_forwards','tools_notes','tools_edit','tool_delete','temp_transfers']);$('.offcanvas-collapse').toggleClass('open')" href="#">Статистика</a>
+          </li>
+          <li class="nav-item" >
+            <a class="nav-link" onclick="view(['temp_transfers','tool_delete','tools_edit','tool_forwards','tools_notes']);$('.offcanvas-collapse').toggleClass('open')" href="#">Отмена передачи</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link  w-100" data-toggle="modal" data-target="#leave" href="#" id="dropdown01" aria-haspopup="true" aria-expanded="false">Logout</a>
+          </li>
+        </ul>
+
+      </div>
+    </nav>
+
+
+    <!--МОДАЛЬНОЕ ОКНО ОТМЕНЫ РАБОТЫ-->
+                            <div class="modal fade" id="leave" tabindex="-1" aria-labelledby="leavelabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title justify-content-center text-center" id="leavelabel">Вы точно хотите выйти?</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+                                
+                              </div>
+                        <div class="modal-body justify-content-center text-center">
+        <a class="dropdown-item text-center" href="{% url 'logout'%}?next=/main">Выйти</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+            <!----УВЕДОМЛЕНИЯ---->
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} text-center m-2" id = "msg" role = "alert">
+                {{ message }}
+            </div>
+            {% if message.tags == 'alert-successx'%}
+            <audio src="{% static 'audio/success.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% if message.tags == 'alert-warning'%}
+            <audio src="{% static 'audio/lag.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% if message.tags == 'alert-danger'%}
+            <audio src="{% static 'audio/error.mp3' %}" autoplay></audio>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+
+
+
+    <main role="main" class="">
+
+  <div class="justify-content-center text-center py-3">
+<!--------------------АДМИНИСТРИРОВАНИЕ ИНСТРУМЕНТА---------------------->
+    <div class=" col-md-5 col-lg-5 mx-auto" id="tools_notes" style="display: block; max-width:95%;">
+                {% if tools_notes %}
+                    <h4 class="mb-3">Электронный журнал</h4>
+                    <div style="overflow: auto;">
+                        <table id = "closed_objects" class="table table-bordered" style="overflow: auto;" >
+                            <thead class="thead-dark">
+                                <tr class="sticky">
+
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Дата</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Инструмент</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Ответственный</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tool_note in tools_notes %}
+                                <tr>
+                                    <th>{{tool_note.date}}</th>
+                                    <th>{{tool_note.tool_name}}</th>
+                                    <th>{{tool_note.worker_id}}</th>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                {% else %}
+                <h1 class="mb-3">Пока нет оформленных инструментов</h1>
+                    {% endif %}
+                </div>
+<!--------------------АДМИНИСТРИРОВАНИЕ ИНСТРУМЕНТА---------------------->
+<!--------------------ВРЕМЕННЫЕ ПЕРЕДАЧИ ИНСТРУМЕНТА---------------------->
+ <div class=" col-md-5 col-lg-5 mx-auto" id="temp_transfers" style="display: none; min-width:600px;">
+                {% if temp_transfers %}
+                    <h4 class="mb-3">Отмена передачи</h4>
+                    <div style="overflow: auto;">
+                        <table id = "temp_transfers" class="table table-bordered" style="overflow: auto;" >
+                            <thead class="thead-dark">
+                                <tr class="sticky">
+
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Адресат</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Инструмент</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Кнопка</th>
+ 
+                                </tr>
+                            </thead>
+                            <tbody class = "align-middle">
+                                {% for note in temp_transfers %}
+                                 <form class="needs-validation" method="post" action="{% url 'delete_temp_note' %} " enctype="multipart/form-data">{% csrf_token %}
+                                <tr>
+                                    <th class = "align-middle" >{{note.worker_id}}</th>
+                                    <input class="form-control"  style="display: none;" type="text" id="worker_name"  name ="worker_name" value = "{{note.worker_id}}">
+                                    <th class = "align-middle">{{note.tool_id}}</th>
+                                    <input class="form-control" style="display: none;" type="text" id="tool_name" name ="tool_name" value = "{{note.tool_id}}">
+                                    <th class = "align-middle"><button class=" btn btn-primary btn-lg my-3"  type = "submit"  >Удалить</button> </th>
+                                </tr>
+                            </form>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                {% else %}
+                <h1 class="mb-3">Нет временных записей</h1>
+                    {% endif %}
+                </div>
+<!--------------------ВРЕМЕННЫЕ ПЕРЕДАЧИ ИНСТРУМЕНТА---------------------->
+<!--------------------РЕДАКТ ИНСТРУМЕНТА---------------------->
+<div class=" col-md-5 col-lg-5 mx-auto" id="tools_edit" style="display: none; min-width:600px;">
+                {% if tools %}
+                    <h4 class="mb-3">Редактирование инструмента</h4>
+                    <div style="overflow: auto;">
+                        <form class="needs-validation" method="post" action="{% url 'edit_tool' %} " enctype="multipart/form-data">{% csrf_token %}
+                            <div class="col-12" >
+                       <label for="tool" class="form-label">Инструмент</label>
+                                <select  name = "tool" class="form-control" required>
+                                    {% for tool in tools %}
+                                    <option class = "text-center"> {{tool.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                                 <div class="col-12">
+                                <label for="new_tool_name" class="form-label my-3" >Новое название</label>
+                                <input class="form-control" type="text" id="new_tool_name"  placeholder = "Уникальное название" required name ="new_tool_name">
+                            </div>
+                            <button class="w-100 btn btn-primary btn-lg my-3"  type = "submit"  >Изменить название</button>
+                        </form>
+                    </div>
+                {% else %}
+                <h1 class="mb-3">Пока нет оформленных инструментов</h1>
+                    {% endif %}
+                </div>
+<!--------------------РЕДАКТ ИНСТРУМЕНТА---------------------->
+
+<!--------------------УДАЛЕНИЕ ИНСТРУМЕНТА---------------------->
+<div class=" col-md-5 col-lg-5 mx-auto" id="tool_delete" style="display: none; min-width:600px;">
+                {% if tools %}
+                    <h4 class="mb-3">Удаление инструмента</h4>
+                    <div style="overflow: auto;">
+                        <form class="needs-validation" method="post" action="{% url 'delete_tool' %} " enctype="multipart/form-data">{% csrf_token %}
+                            <div class="col-12" >
+                       <label for="tool" class="form-label">Инструмент</label>
+                                <select  name = "tool" class="form-control" required>
+                                    {% for tool in tools %}
+                                    <option class = "text-center"> {{tool.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                                 
+                            <button class="w-100 btn btn-primary btn-lg my-3"  type = "submit"  >Прописать вертушку</button>
+                        </form>
+                    </div>
+                {% else %}
+                <h1 class="mb-3">Пока нечего удалять</h1>
+                    {% endif %}
+                </div>
+<!--------------------УДАЛЕНИЕ ИНСТРУМЕНТА---------------------->
+
+  </div>
+            <!--МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ ИНСТРУМЕНТА------------------------------>
+                            <div class="modal fade justify-content-center text-center" id="add_tool" tabindex="-1" aria-labelledby="add_toollabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" style ="padding-left: 100px;" id="cancellabel">Добавление инструмента</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+                                
+                              </div>
+                        <div class="modal-body">
+                                <form class="needs-validation" method="post" action="{% url 'add_tool' %} " enctype="multipart/form-data">{% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="tool_name" class="form-label" >Именование инструмента</label>
+                                <input class="form-control" type="text" id="tool_name"  placeholder = "Уникальное название"  name ="tool_name">
+                            </div>
+
+
+                            <button class="w-100 btn btn-primary btn-lg"  type = "submit"  >Добавить инструмент</button> 
+                        </div>
+                    </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+<!--МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ ИНСТРУМЕНТА------------------------------>
+    <!------------------------------------МОДАЛЬНОЕ ОКНО ПРИЁМА ИНСТРУМЕНТА------------------------->
+                            <div class="modal fade justify-content-center text-center" id="tool_forwarding" tabindex="-1" aria-labelledby="tool_forwardinglabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header justify-content-center text-center">
+                                <h5 class="modal-title" style ="padding-left: 100px;" id="cancellabel">Принятие инструмента</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+                                
+                              </div>
+                        <div class="modal-body">
+                            {% if orig_notes %}
+                                <form class="needs-validation" method="post" action="{% url 'tool_forwarding' %} " enctype="multipart/form-data">{% csrf_token %}
+                            
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="tool" class="form-label">Инструмент</label>
+                                <select onchange="change()" id="tool" name = "tool" class="form-control" required>
+                                    {% for tool_note in orig_notes %}
+                                    <option class = "text-center"> {{tool_note.tool_name}}
+                                    </option>
+                                    
+                                    {% endfor %}
+
+                                </select>
+                                {% for tool_note in orig_notes %}
+
+                                <input type="text" style="display:none" id="{{tool_note.tool_name}}" placeholder="" value="{{tool_note.worker_id}}" readonly>
+                                {% endfor %}
+                            </div>
+                            <div class="col-12">
+                                <label for="person" class="form-label">Ответственное лицо в данный момент</label>
+                                <input type="text" class="form-control text-center" name ="worker_name"  id="worker_name" placeholder="" value="" readonly>
+                            </div>
+                            
+                             <div class="col-12">
+                             <input type="text" class="form-control text-center" name="comments" placeholder="Примечание" id="comments" >
+                            </div>
+                            <button class="w-100 btn btn-primary btn-lg"  name = "submit" type = "submit"  >Взять инструмент</button> 
+                        </div>
+                    </form>
+                    {% else %}
+                    <h5 class="modal-title"  id="cancellabel">Весь инструмент в данный момент висит на Вас</h5>
+                    {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+<!---------------------------МОДАЛЬНОЕ ОКНО ПРИЁМА ИНСТРУМЕНТА------------------------------------>
+
+
+<!---ИСТОРИЯ ПЕРЕДАЧ(ПАСОВ)----->
+               <div class=" col-md-5 col-lg-5 mx-auto justify-content-center text-center" id="tool_forwards" style="display: none; ">
+                    {% if transfers %}
+                    <h4 class="mb-3">История передач инструмента</h4>
+                  <table class="table table-bordered justify-content-center">
+        <tbody><tr class="justify-content-center">
+            <td>Начальная дата:</td>
+            <td><input type="text" id="min" ></td>
+        </tr>
+        <tr class="justify-content-center">
+            <td>Конечная дата:</td>
+            <td><input type="text" id="max"></td>
+        </tr>
+    </tbody></table>
+                    <div class ="table-responsive" style="overflow: auto;">
+                        <table id = "tools_transfers" class="table table-bordered" style="overflow: auto;" >
+                            <thead class="thead-dark" style="position: sticky">
+                                <tr class="sticky">
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">№</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Дата</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Инструмент</th>
+                                     <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Примечание</th>
+                                    <th class="align-middle text-center" style="position: sticky; top: 0; z-index: 1;" scope="col">Ответственный</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transfer in transfers %}
+                                <tr>
+
+                                    <td class=" align-middle text-center">{{transfer.note_id}}</td>
+                                    <td class=" align-middle text-center">{{transfer.date|date:"Y-m-d"}}</td>
+                                    <td class=" align-middle text-center">{{transfer.tool_name}}</td>
+                                    <td class=" align-middle text-center">{{transfer.note}}</td>
+                                    <td class=" align-middle text-center">{{transfer.worker_id}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                    {% else %}
+                    <h1 class="mb-3">Пока нет передач инструмента</h1>
+                    {% endif %}
+                </div>         
+    </main>
+
+
+
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<link href="https://nightly.datatables.net/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+<script src="https://nightly.datatables.net/js/jquery.dataTables.js"></script> 
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<!-- DataTables  & Plugins -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.1.2/css/dataTables.dateTime.min.css">
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.1.2/js/dataTables.dateTime.min.js"></script>
+  </body>
+  <script>
+      $('#tool').change(function(){
+        $('worker_name') = $(this).val();
+})
+  </script>
+  <script>
+    function change() {
+       d = document.getElementById("tool").value;
+       id = document.getElementById(d).value;
+       document.getElementById("worker_name").value = id;
+        }
+  </script>
+   <script >
+        setTimeout(function(){
+          if ($('#msg').length > 0) {
+            $('#msg').remove();
+          }
+        }, 4000)
+    </script>
+      <script>
+        function view(ids){
+                
+                 document.getElementById(ids[0]).style.display = 'block';
+
+                for (var i = 1; i < ids.length; i++) {
+                    //console.log(ids[i].toString())
+                   document.getElementById(ids[i]).style.display = 'none';
+                }
+              }
+    </script>
+  <script type = "text/javascript">
+$.fn.dataTableExt.oApi.fnStandingRedraw = function(oSettings) {
+    //redraw to account for filtering and sorting
+    // concept here is that (for client side) there is a row got inserted at the end (for an add)
+    // or when a record was modified it could be in the middle of the table
+    // that is probably not supposed to be there - due to filtering / sorting
+    // so we need to re process filtering and sorting
+    // BUT - if it is server side - then this should be handled by the server - so skip this step
+    if(oSettings.oFeatures.bServerSide === false){
+        var before = oSettings._iDisplayStart;
+        oSettings.oApi._fnReDraw(oSettings);
+        //iDisplayStart has been reset to zero - so lets change it back
+        oSettings._iDisplayStart = before;
+        oSettings.oApi._fnCalculateEnd(oSettings);
+    }
+      
+    //draw the 'current' page
+    oSettings.oApi._fnDraw(oSettings);
+};
+
+  var minDate, maxDate;
+ 
+ // Custom filtering function which will search data in column four between two values
+ $.fn.dataTable.ext.search.push(
+     function( settings, data, dataIndex ) {
+         var min = minDate.val();
+         var max = maxDate.val();
+         var date = new Date( moment(data[1], 'YYYY-MM-DD').format('YYYY-MM-DD') );
+       
+  
+         if (
+             ( min === null && max === null ) ||
+             ( min === null && date <= max ) ||
+             ( min <= date   && max === null ) ||
+             ( min <= date   && date <= max )
+         ) {
+             return true;
+         }
+         return false;
+         var min = minDate.val();
+         var max = maxDate.val();
+         var date = new Date( moment(data[2], 'YYYY-MM-DD').format('YYYY-MM-DD') );
+       
+  
+         if (
+             ( min === null && max === null ) ||
+             ( min === null && date <= max ) ||
+             ( min <= date   && max === null ) ||
+             ( min <= date   && date <= max )
+         ) {
+             return true;
+         }
+         return false;
+     }
+ );
+  
+ $(document).ready(function() {
+     // Create date inputs
+     minDate = new DateTime($('#min'), {
+         format: 'YYYY-MM-DD'
+     });
+     maxDate = new DateTime($('#max'), {
+         format: 'YYYY-MM-DD'
+     });
+  
+
+
+     // DataTables initialisation
+     var table = $('#tools_transfers').dataTable();
+  
+  $('#min').on('change', function () {
+         table.fnStandingRedraw();
+         table.draw(page);
+     });
+     // Refilter the table
+     $('#min').on('click', function () {
+         table.columns.adjust().draw();
+     });
+
+     $('#max').on('change', function () {
+         table.fnStandingRedraw();
+         table.draw(page);
+     });
+     $('#max').on('click', function () {
+   table.columns.adjust().draw(); // Redraw the DataTable
+});
+ });
+
+</script>
+</html>

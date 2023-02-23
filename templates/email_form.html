@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+{% load bootstrap4 %}
+    <head>
+        {% load bootstrap4 %}
+        {% load static %}
+        {% bootstrap_css %} 
+    <meta charset="utf-8">
+    <meta name="viewport" content= "width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel= "icon"href="{% static 'img/favicon.png' %}">
+    <meta name="author" content="">
+
+
+    <title>Подтверждение Email</title>
+
+ <!----------------------------CSS ---------------------------->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <link href="{% static 'css/bootstrap.min.css.map' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+<!----------------------------CSS ---------------------------->
+
+  </head>
+
+  <body class="bg-secondary" style="height:100%">
+
+
+    <main class="container" role="main" class=" pr-0">
+
+
+<!------------------------------------------ПОДТВЕРДИТЬ МЫЛО---------------------------------------------------------->
+
+  <div class="justify-content-center text-center" style="margin-top: 30px;">
+                <div class="col-md-6 order-md-6 jumbotron mx-auto bg-light py-5" style="border-radius: 15px;" >
+                             <label stylfor="">{{ message }}</label>
+                            <label stylfor="">Код подтверждения</label>
+                            <label stylfor="">{{ activation_code }}</label>              
+
+                        <a class=" form-control btn btn-primary btn-lg my-3" href="http://127.0.0.1:8000/confirm_email/" type="submit">Перейти к подтверждению</button>
+                </div>
+
+                </div>
+
+<!------------------------------------------ПОДТВЕРДИТЬ МЫЛО-------------------------------------------------------->
+    </main>
+  </body>
+</html>
